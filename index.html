@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PWA Barcode App</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#3367D6">
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="https://unpkg.com/quagga@0.12.1/dist/quagga.min.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; max-width: 400px; margin: auto; }
+    h1 { font-size: 1.5rem; margin-bottom: .5rem; }
+    label { display: block; font-weight: bold; margin-top: .75rem; }
+    input, select, button { width: 100%; padding: .5rem; margin: .25rem 0; }
+    small { display: block; color: #555; margin-bottom: .5rem; }
+    svg { width: 100%; height: auto; border: 1px solid #ccc; margin-top: .5rem; }
+    #barcode-text { text-align: center; font-weight: bold; margin-top: .25rem; }
+  </style>
+</head>
+<body>
+  <h1>Scan • Generate • Print</h1>
+  <label for="tNumber">T-Number (numeric part only):</label>
+  <input id="tNumber" type="text" placeholder="Enter digits, e.g., 12345">
+  <button id="start-scan">📷 Scan T-Number</button>
+  <label for="company">Company:</label>
+  <select id="company">
+    <option value="">Select Company…</option>
+    <option>AcmeCo</option>
+    <option>BetaCorp</option>
+    <option>GammaInc</option>
+  </select>
+  <small>Selects the company-specific label template on the printer.</small>
+  <label for="counter">Step Counter:</label>
+  <select id="counter">
+    <option value="">Select step…</option>
+    <option value="1">1</option>
+    <option value="5">5</option>
+  </select>
+  <small>Select the incremental step (always starts at 0): e.g., choosing 5 yields 0, 5, 10, 15, ...</small>
+  <label for="unit">Unit:</label>
+  <select id="unit">
+    <option value="">Select unit…</option>
+    <option value="ft">ft (feet)</option>
+    <option value="m">m (meters)</option>
+    <option value="yd">yd (yards)</option>
+  </select>
+  <small>Defines the measurement unit for internal pulse configuration.</small>
+  <label><input id="show-unit" type="checkbox"> Show unit on printed label</label>
+  <small>Check to include unit text on the printed label.</small>
+  <button id="generate">🔖 Generate Barcode</button>
+  <div>
+    <svg id="barcode"></svg>
+    <div id="barcode-text"></div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const templateMap = { AcmeCo: '01', BetaCorp: '02', GammaInc: '03' };
+      const inputT = document.getElementById('tNumber');
+      const btnScan = document.getElementById('start-scan');
+      const selectCompany = document.getElementById('company');
+      const selectCounter = document.getElementById('counter');
+      const selectUnit = document.getElementById('unit');
+      const showUnit = document.getElementById('show-unit');
+      const btnGenerate = document.getElementById('generate');
+      const svgEl = document.getElementById('barcode');
+      const textEl = document.getElementById('barcode-text');
+      btnScan.addEventListener('click', () => {
+        Quagga.init({
+          inputStream: { type: 'LiveStream', constraints: { facingMode: 'environment' } },
+          decoder: { readers: ['code_128_reader'] }
+        }, err => { if (err) { alert('Scanner init failed'); return; } Quagga.start(); });
+        Quagga.onDetected(data => { inputT.value = data.codeResult.code.replace(/^T/, ''); Quagga.stop(); });
+      });
+      btnGenerate.addEventListener('click', () => {
+        let raw = inputT.value.trim();
+        if (!/^[0-9]+$/.test(raw)) { alert('Enter only digits for T-Number'); return; }
+        const tNum = 'T' + raw;
+        const company = selectCompany.value;
+        const step = selectCounter.value;
+        const unit = selectUnit.value;
+        if (!company || !step || !unit) { alert('Please complete all fields'); return; }
+        const tplId = templateMap[company]; if (!tplId) { alert('No template for ' + company); return; }
+        const counterSegment = showUnit.checked ? `${step}${unit}` : `${step}`;
+        const payload = `${tNum}|${tplId}|${counterSegment}`;
+        try {
+          JsBarcode(svgEl, payload, { format: 'CODE128', displayValue: false, height: 60, margin: 10 });
+          textEl.textContent = tNum + (showUnit.checked ? ' ' + unit : '');
+        } catch (e) {
+          alert('Barcode generation error'); console.error(e);
+        }
+      });
+      if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
+    });
+  </script>
+</body>
+</html>
