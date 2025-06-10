@@ -2,108 +2,55 @@
 Project: pwa-barcode-app
 File structure (serve over HTTP):
   /pwa-barcode-app
-  ├─ index.html           # main PWA UI
-  ├─ manifest.json        # PWA manifest (see below)
-  ├─ service-worker.js    # service worker (see below)
+  ├─ index.html           # main PWA UI (CIJ printer barcode generator)
+  ├─ manifest.json        # PWA manifest
+  ├─ service-worker.js    # service worker
   └─ assets/
-     ├─ icon-192.png      # PWA icon
-     └─ icon-512.png      # PWA icon
+     ├─ icon-192.png      # App icons & logo
+     └─ UF_Logo_UF_Vertical_Vortex_FullColor.webp
 -->
 
 <!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Scan to Print App</title>
-  <!-- PWA install meta -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Scan to Print">
-  <link rel="icon" href="assets/icon-192.png">
-  <link rel="apple-touch-icon" href="assets/icon-192.png">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#3367D6">
+  <!-- PWA install support -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Scan to Print" />
+  <link rel="icon" href="assets/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#3367D6" />
+  <!-- JsBarcode Library -->
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <style>
+    /* Global */
     *, *::before, *::after { box-sizing: border-box; }
-    body {
-      font-family: sans-serif;
-      background-color: #f5f5f5;
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
-      .container {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      padding: 1rem;
-      max-width: 400px;
-      margin: 2rem auto;
-    }
-    h1 {
-      color: #007bff;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-    label {
-      display: block;
-      color: #555;
-      font-weight: bold;
-      margin-top: 1rem;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-    button {
-      background: #007bff;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    svg {
-      width: 100%;
-      height: auto;
-      margin-top: 1rem;
-      background: #fff;
-    }
-    #barcode-info {
-      margin-top: 1rem;
-      background: #f0f0f0;
-      padding: 0.75rem;
-      border-radius: 4px;
-      font-size: 0.9rem;
-    }
-    #barcode-info p { margin: 0.25rem 0; }
-    .inline-checkbox {
-      display: flex;
-      align-items: center;
-      white-space: nowrap;
-      margin: 0.5rem 0;
-    }
-    .inline-checkbox span {
-      margin-right: 0.5rem;
-    }
-    .inline-checkbox input {
-      margin-left: 0;
-    }
+    body { font-family: sans-serif; background:#f5f5f5; color:#333; margin:0; padding:0; }
+    .container { background:#fff; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); padding:1rem; max-width:400px; margin:2rem auto; }
+    h1 { color:#007bff; text-align:center; margin-bottom:1rem; }
+    label { display:block; color:#555; font-weight:bold; margin-top:1rem; }
+    input, select, button { width:100%; padding:.75rem; margin:.5rem 0; border:1px solid #ccc; border-radius:4px; font-size:1rem; }
+    button { background:#007bff; color:#fff; border:none; cursor:pointer; }
+    button:hover { background:#0056b3; }
+    svg { width:100%; height:auto; margin-top:1rem; background:#fff; }
+    #barcode-info { margin-top:1rem; background:#f0f0f0; padding:.75rem; border-radius:4px; font-size:.9rem; }
+    #barcode-info p { margin:.25rem 0; }
+    .inline-checkbox { display:flex; align-items:center; white-space:nowrap; margin:.5rem 0; }
+    .inline-checkbox span { margin-right:.5rem; }
   </style>
 </head>
 <body>
   <div class="container">
-    <img src="assets/UF_Logo_UF_Vertical_Vortex_FullColor.webp" alt="Logo" style="display:block; margin:0 auto 1rem; max-width:150px;">
+    <img src="assets/UF_Logo_UF_Vertical_Vortex_FullColor.webp" alt="Logo" style="display:block;margin:0 auto 1rem;max-width:150px;" />
     <h1>Scan to Print</h1>
+
     <label for="tNumber">T-Number:</label>
-    <input id="tNumber" type="text" placeholder="Enter full T-Number, e.g., T12345">
+    <input id="tNumber" type="text" placeholder="Enter full T-Number, e.g., T12345" />
 
     <label for="company">Customer:</label>
     <select id="company">
@@ -181,7 +128,6 @@ File structure (serve over HTTP):
       <option value="1">1</option>
       <option value="5">5</option>
     </select>
-    
 
     <label for="unit">Unit:</label>
     <select id="unit">
