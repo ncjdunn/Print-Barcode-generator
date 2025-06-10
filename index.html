@@ -21,6 +21,7 @@ File structure (serve over HTTP):
   <meta name="theme-color" content="#3367D6">
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <style>
+    *, *::before, *::after { box-sizing: border-box; }
     body {
       font-family: sans-serif;
       background-color: #f5f5f5;
@@ -28,7 +29,7 @@ File structure (serve over HTTP):
       margin: 0;
       padding: 0;
     }
-    .container {
+      .container {
       background: #fff;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -77,115 +78,123 @@ File structure (serve over HTTP):
       border-radius: 4px;
       font-size: 0.9rem;
     }
-    #barcode-info p {
-      margin: 0.25rem 0;
+    #barcode-info p { margin: 0.25rem 0; }
+    .inline-checkbox {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      margin: 0.5rem 0;
+    }
+    .inline-checkbox span {
+      margin-right: 0.5rem;
+    }
+    .inline-checkbox input {
+      margin-left: 0;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <img src="assets/UF_Logo_UF_Vertical_Vortex_FullColor.webp" alt="Logo" style="display:block; margin:0 auto 1rem; max-width:150px;">
+    <h1>Scan to Print</h1>
+    <label for="tNumber">T-Number:</label>
+    <input id="tNumber" type="text" placeholder="Enter full T-Number, e.g., T12345">
 
-  <h1>Scan to Print</h1>
+    <label for="company">Company:</label>
+    <select id="company">
+      <option value="">Select Company…</option>
+      <option value="01">AE SERVICES (01)</option>
+      <option value="02">AMERICAN PIPELINERS (02)</option>
+      <option value="03">BLD SERVICES (03)</option>
+      <option value="04">CAPITAL SEWER SERVICES (04)</option>
+      <option value="05">CGI ENVIRONNEMENT (05)</option>
+      <option value="06">CHARLES MACHINE WORKS (NON-POTABLE WATER) (06)</option>
+      <option value="07">CHARLES MACHINE WORKS (POTABLE WATER) (07)</option>
+      <option value="08">CHICAGOLAND TRENCHLESS (08)</option>
+      <option value="09">CIPP CHILE (09)</option>
+      <option value="10">CIR INGENIERIA (10)</option>
+      <option value="11">CLEAN WATER WORKS (11)</option>
+      <option value="12">COLUMBIA PUMPING & CONSTRUCTION (12)</option>
+      <option value="13">CORBY ENERGY SERVICES (13)</option>
+      <option value="14">DVM UTILITIES (14)</option>
+      <option value="15">FORACTION (15)</option>
+      <option value="16">FORMADRAIN (16)</option>
+      <option value="17">FRAWNER CORP (17)</option>
+      <option value="18">GENESEE VALLEY CONSTRUCTION (18)</option>
+      <option value="19">GREEN MOUNTAIN PIPELINE (19)</option>
+      <option value="20">GULF COAST UNDERGROUND (20)</option>
+      <option value="21">HAMMERHEAD TRENCHLESS (21)</option>
+      <option value="22">HOERR CONSTRUCTION (22)</option>
+      <option value="23">HYDRO-KLEAN (23)</option>
+      <option value="24">INBODE (24)</option>
+      <option value="25">INFRAHYDRO (25)</option>
+      <option value="26">INLINER SOLUTIONS (26)</option>
+      <option value="27">INSIGHT PIPE (27)</option>
+      <option value="28">JET JACK (28)</option>
+      <option value="29">JRG MATERIALS LLC (29)</option>
+      <option value="30">LANZO TRENCHLESS TECHNOLOGIES (30)</option>
+      <option value="31">LEAK ELIMINATORS (31)</option>
+      <option value="32">LINER PRODUCTS (32)</option>
+      <option value="33">MARTECH (33)</option>
+      <option value="34">MASTERLINER INC. (34)</option>
+      <option value="35">MAXLINER (35)</option>
+      <option value="36">MICHELS EAST (36)</option>
+      <option value="37">MICHELS TRENCHLESS - BROWNSVILLE (37)</option>
+      <option value="38">MICHELS TRENCHLESS - HAWAII (38)</option>
+      <option value="39">MICHELS TRENCHLESS - SALEM (39)</option>
+      <option value="40">MIN CHEM CANADA (40)</option>
+      <option value="41">MINNEAPOLIS SEWER DEPARTMENT (41)</option>
+      <option value="42">MUNICIPAL PIPE TOOL (42)</option>
+      <option value="43">NATIONAL WATER MAIN CLEANING CO (43)</option>
+      <option value="44">PERFORMANCE PIPELINING (44)</option>
+      <option value="45">PIPENOLOGY - OFALLON (45)</option>
+      <option value="46">PIPENOLOGY - ROCKLIN (46)</option>
+      <option value="47">QUADEX (47)</option>
+      <option value="48">SANCON TECHNOLOGIES (48)</option>
+      <option value="49">SANI-WAY (49)</option>
+      <option value="50">SERVICES INFRASPEC (50)</option>
+      <option value="51">SEWER TECHNOLOGIES (51)</option>
+      <option value="52">SKANEX PIPE SERVICES (52)</option>
+      <option value="53">SOUTHWEST PIPE (53)</option>
+      <option value="54">SPINIELLO (54)</option>
+      <option value="55">SUNCOAST INFRASTRUCTURE (55)</option>
+      <option value="56">TEMPLE & TEMPLE (56)</option>
+      <option value="57">TERRA ENGINEERING AND CONSTRUCTION (57)</option>
+      <option value="58">TRI STATE UTILITIES (58)</option>
+      <option value="59">UNITED SURVEY (59)</option>
+      <option value="60">UNITED WETOUT (60)</option>
+      <option value="61">UNITED WETOUT HIDALGO (61)</option>
+      <option value="62">UPSTATE TRENCHLESS (62)</option>
+      <option value="63">VEIT COMPANIES (63)</option>
+      <option value="64">VISU SEWER (64)</option>
+      <option value="65">W. E. RAWSON (65)</option>
+    </select>
 
-  <label for="tNumber">T-Number:</label>
-  <input id="tNumber" type="text" placeholder="Enter full T-Number, e.g., T12345">
+    <label for="counter">Step Counter:</label>
+    <select id="counter">
+      <option value="">Select step…</option>
+      <option value="1">1</option>
+      <option value="5">5</option>
+    </select>
+    
 
-  <label for="company">Company:</label>
-  <select id="company"> id="company">
-    <option value="">Select Company…</option>
-    <option value="01">AE SERVICES (01)</option>
-    <option value="02">AMERICAN PIPELINERS (02)</option>
-    <option value="03">BLD SERVICES (03)</option>
-    <option value="04">CAPITAL SEWER SERVICES (04)</option>
-    <option value="05">CGI ENVIRONNEMENT (05)</option>
-    <option value="06">CHARLES MACHINE WORKS (NON-POTABLE WATER) (06)</option>
-    <option value="07">CHARLES MACHINE WORKS (POTABLE WATER) (07)</option>
-    <option value="08">CHICAGOLAND TRENCHLESS (08)</option>
-    <option value="09">CIPP CHILE (09)</option>
-    <option value="10">CIR INGENIERIA (10)</option>
-    <option value="11">CLEAN WATER WORKS (11)</option>
-    <option value="12">COLUMBIA PUMPING & CONSTRUCTION (12)</option>
-    <option value="13">CORBY ENERGY SERVICES (13)</option>
-    <option value="14">DVM UTILITIES (14)</option>
-    <option value="15">FORACTION (15)</option>
-    <option value="16">FORMADRAIN (16)</option>
-    <option value="17">FRAWNER CORP (17)</option>
-    <option value="18">GENESEE VALLEY CONSTRUCTION (18)</option>
-    <option value="19">GREEN MOUNTAIN PIPELINE (19)</option>
-    <option value="20">GULF COAST UNDERGROUND (20)</option>
-    <option value="21">HAMMERHEAD TRENCHLESS (21)</option>
-    <option value="22">HOERR CONSTRUCTION (22)</option>
-    <option value="23">HYDRO-KLEAN (23)</option>
-    <option value="24">INBODE (24)</option>
-    <option value="25">INFRAHYDRO (25)</option>
-    <option value="26">INLINER SOLUTIONS (26)</option>
-    <option value="27">INSIGHT PIPE (27)</option>
-    <option value="28">JET JACK (28)</option>
-    <option value="29">JRG MATERIALS LLC (29)</option>
-    <option value="30">LANZO TRENCHLESS TECHNOLOGIES (30)</option>
-    <option value="31">LEAK ELIMINATORS (31)</option>
-    <option value="32">LINER PRODUCTS (32)</option>
-    <option value="33">MARTECH (33)</option>
-    <option value="34">MASTERLINER INC. (34)</option>
-    <option value="35">MAXLINER (35)</option>
-    <option value="36">MICHELS EAST (36)</option>
-    <option value="37">MICHELS TRENCHLESS - BROWNSVILLE (37)</option>
-    <option value="38">MICHELS TRENCHLESS - HAWAII (38)</option>
-    <option value="39">MICHELS TRENCHLESS - SALEM (39)</option>
-    <option value="40">MIN CHEM CANADA (40)</option>
-    <option value="41">MINNEAPOLIS SEWER DEPARTMENT (41)</option>
-    <option value="42">MUNICIPAL PIPE TOOL (42)</option>
-    <option value="43">NATIONAL WATER MAIN CLEANING CO (43)</option>
-    <option value="44">PERFORMANCE PIPELINING (44)</option>
-    <option value="45">PIPENOLOGY - OFALLON (45)</option>
-    <option value="46">PIPENOLOGY - ROCKLIN (46)</option>
-    <option value="47">QUADEX (47)</option>
-    <option value="48">SANCON TECHNOLOGIES (48)</option>
-    <option value="49">SANI-WAY (49)</option>
-    <option value="50">SERVICES INFRASPEC (50)</option>
-    <option value="51">SEWER TECHNOLOGIES (51)</option>
-    <option value="52">SKANEX PIPE SERVICES (52)</option>
-    <option value="53">SOUTHWEST PIPE (53)</option>
-    <option value="54">SPINIELLO (54)</option>
-    <option value="55">SUNCOAST INFRASTRUCTURE (55)</option>
-    <option value="56">TEMPLE & TEMPLE (56)</option>
-    <option value="57">TERRA ENGINEERING AND CONSTRUCTION (57)</option>
-    <option value="58">TRI STATE UTILITIES (58)</option>
-    <option value="59">UNITED SURVEY (59)</option>
-    <option value="60">UNITED WETOUT (60)</option>
-    <option value="61">UNITED WETOUT HIDALGO (61)</option>
-    <option value="62">UPSTATE TRENCHLESS (62)</option>
-    <option value="63">VEIT COMPANIES (63)</option>
-    <option value="64">VISU SEWER (64)</option>
-    <option value="65">W. E. RAWSON (65)</option>
-  </select>
+    <label for="unit">Unit:</label>
+    <select id="unit">
+      <option value="">Select unit…</option>
+      <option value="ft">ft (feet)</option>
+      <option value="m">m (meters)</option>
+      <option value="yd">yd (yards)</option>
+    </select>
 
-  <label for="counter">Step Counter:</label>
-  <select id="counter">
-    <option value="">Select step…</option>
-    <option value="1">1</option>
-    <option value="5">5</option>
-  </select>
-  <small>Starts at 0 and steps by the selected value for CIJ pulse configuration.</small>
+    <label class="inline-checkbox">
+      <span>Show FT, M, or Yards after counter</span>
+      <input id="show-unit" type="checkbox">
+    </label>
 
-  <label for="unit">Unit:</label>
-  <select id="unit">
-    <option value="">Select unit…</option>
-    <option value="ft">ft (feet)</option>
-    <option value="m">m (meters)</option>
-    <option value="yd">yd (yards)</option>
-  </select>
-  <small>Defines the CIJ printer's pulse unit (not printed unless enabled).</small>
-
-  <label style="display: inline-flex; align-items: center;">
-    <span>Show FT, M, or Yards after counter</span>
-    <input id="show-unit" type="checkbox" style="margin-left: 0.5rem;">
-  </label>
-
-  <button id="generate">Generate for CIJ</button>
-  <svg id="barcode"></svg>
-  <div id="barcode-info"></div>
+    <button id="generate">Generate for CIJ</button>
+    <svg id="barcode"></svg>
+    <div id="barcode-info"></div>
+  </div>
 
   <script>
     document.getElementById('generate').addEventListener('click', function() {
