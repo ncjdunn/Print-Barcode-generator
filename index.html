@@ -1,6 +1,18 @@
 <!--
 Project: scan-to-print-pwa
-Feature: Remove inline log display from index.html
+Feature: Add Line # dropdown and include in logs only
+File structure:
+  /scan-to-print-pwa
+  ├─ index.html           # main PWA UI
+  ├─ log.html             # log panel
+  ├─ manifest.json        # PWA manifest
+  ├─ service-worker.js    # service worker
+  └─ assets/
+     ├─ logo.webp         # App logo
+     ├─ icon-192.png      # Android icon
+     ├─ icon-152.png      # iOS icon
+     ├─ icon-180.png      # iOS icon
+     └─ icon-512.png      # Android icon
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -32,14 +44,15 @@ Feature: Remove inline log display from index.html
     button { background: #007bff; color: #fff; border: none; cursor: pointer; }
     button:hover { background: #0056b3; }
     svg { width: 100%; height: auto; margin-top: 1rem; background: #fff; }
-    #barcode-info { margin-top: 1rem; padding: .75rem; background: #f0f0f0; border-radius: 4px; font-size: .9rem; }
-    #barcode-info p { margin: .25rem 0; }
+    #barcode-info, #log { margin-top: 1rem; padding: .75rem; background: #f0f0f0; border-radius: 4px; font-size: .9rem; }
+    #barcode-info p, #log p { margin: .25rem 0; }
   </style>
 </head>
 <body>
   <div class="container">
-        <a href="log.html" style="display:block; text-align:right; color:#007bff; text-decoration:none; margin-bottom:.5rem;">Log Panel</a>
-    <h1>Scan to Print</h1>Scan to Print</h1>
+    <a href="log.html" style="display:block; text-align:right; color:#007bff; text-decoration:none; margin-bottom:.5rem;">Log Panel</a>
+    <img src="assets/logo.webp" alt="App Logo" style="display:block; margin:0 auto 1rem; max-width:150px;" />
+    <h1>Scan to Print</h1>
 
     <label for="mode">Mode:</label>
     <select id="mode">
@@ -120,6 +133,20 @@ Feature: Remove inline log display from index.html
       <option value="65">W. E. RAWSON (65)</option>
     </select>
 
+    <!-- New Line # dropdown -->
+    <label for="lineNumber">Line #:</label>
+    <select id="lineNumber">
+      <option value="">Select line…</option>
+      <option value="1">Line 1</option>
+      <option value="2">Line 2</option>
+      <option value="3">Line 3</option>
+      <option value="4">Line 4</option>
+      <option value="6">Line 6</option>
+      <option value="7">Line 7</option>
+      <option value="8">Line 8</option>
+      <option value="9">Line 9</option>
+    </select>
+
     <label for="counter">Step Counter:</label>
     <select id="counter">
       <option value="">Select step…</option>
@@ -163,6 +190,7 @@ Feature: Remove inline log display from index.html
       var mode = document.getElementById('mode').value;
       var tNumber = document.getElementById('tNumber').value.trim();
       var companySegment = document.getElementById('company').value;
+      var lineNum = document.getElementById('lineNumber').value;
       var counter = document.getElementById('counter').value;
       var unit = document.getElementById('unit').value;
       var showUnit = document.getElementById('show-unit').checked;
@@ -171,14 +199,17 @@ Feature: Remove inline log display from index.html
       if(mode==='barcode'){
         JsBarcode('#barcode',payload,{format:'CODE128',displayValue:false,height:60,margin:10});
         document.getElementById('barcode-info').textContent='Payload: '+payload;
-        addLog('Generated barcode: '+payload);
+        addLog('Generated barcode: '+payload + ' | Line #: ' + lineNum);
       } else {
         var ip=document.getElementById('printerIp').value.trim();
         var port=document.getElementById('printerPort').value.trim();
-        if(!tNumber||!companySegment||!counter||!unit||!ip||!port){alert('Complete all fields');return;}
+        if(!tNumber||!companySegment||!counter||!unit||!ip||!port||!lineNum){alert('Complete all fields');return;}
         fetch('http://'+ip+':'+port,{method:'POST',headers:{'Content-Type':'text/plain'},body:payload+'\r\n'})
-          .then(function(res){if(!res.ok)throw new Error('Printer error:'+res.status);addLog('Sent to printer '+ip+':'+port+' payload:'+payload);alert('Sent to printer!');})
-          .catch(function(err){addLog('Error sending to printer:'+err);alert('Failed to send to printer');});
+          .then(function(res){if(!res.ok)throw new Error('Printer error:'+res.status);
+            addLog('Sent to printer '+ip+':'+port+' payload:'+payload + ' | Line #: ' + lineNum);
+            alert('Sent to printer!');
+          })
+          .catch(function(err){addLog('Error:'+err+' | Line #: ' + lineNum);alert('Failed to send to printer');});
       }
     });
   </script>
