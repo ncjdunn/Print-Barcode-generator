@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log Panel</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; background: #f5f5f5; }
+    .container { max-width: 600px; margin: auto; background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    h1 { color: #007bff; text-align: center; }
+    .log-entry { margin: 0.5rem 0; padding: 0.5rem; background: #e9ecef; border-radius: 4px; }
+    a { display: inline-block; margin-bottom: 1rem; color: #007bff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="#" onclick="window.history.back(); return false;">&larr; Back to App</a>
+    <h1>Log Panel</h1>
+    <div id="log-list"></div>
+  </div>
+  <script>
+    // Read logs from localStorage and display
+    var logs = JSON.parse(localStorage.getItem('logs') || '[]');
+    var container = document.getElementById('log-list');
+    if (logs.length === 0) {
+      container.innerHTML = '<p>No log entries yet.</p>';
+    } else {
+      logs.forEach(function(entry) {
+        var div = document.createElement('div');
+        div.className = 'log-entry';
+        div.textContent = entry;
+        container.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>
